@@ -1,56 +1,55 @@
 package org.example;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        if(args.length<3){
-            System.out.println("Please add all required arguments: solution/assignment source_path destination_path");
+        if (args.length < 3) {
+            System.out.println("Please add all required arguments: solution/assignment source_path destination_path (optional) --fileEndingsModifyWhiteList .java .... (optional) --fileEndingsBlacklist .txt ...");
             return;
         }
 
-        if(args[1].equals(args[2])){
+        if (args[1].equals(args[2])) {
             System.out.println("SourcePath should not be DestinationPath to prevent unwanted Dataloss!");
             return;
         }
 
-        System.out.println(args[1]+":"+args[2]);
-        AssignmentConverter converter = new AssignmentConverter();
+        System.out.println(args[1] + ":" + args[2]);
 
-        File sourceDirectory = new File(args[1]);
-        File destinationDirectory = new File(args[2]);
-        FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
+        List<String> fileWhiteList = getArgumentValuesList(args, "--fileEndingsModifyWhiteList");
+        List<String> fileBlackList = getArgumentValuesList(args, "--fileEndingsBlacklist");
 
-        Set<String> javaPaths = listFilesUsingFileWalk(destinationDirectory.getAbsolutePath());
-
-        for(String path: javaPaths){
-            if(args[0].equals("assignment")){
-                converter.convertFileToAssignment(path,path);
-            } else if (args[0].equals("solution")) {
-                converter.convertFileToSolution(path,path);
-            }
-
+        //fill with default parameters
+        if (fileWhiteList.isEmpty()) {
+            fileWhiteList.addAll(List.of(".java", ".gradle"));
+            System.out.println("fileWhiteList Empty adding default values!");
         }
+
+        new ProjectConverter(new FileConverter(), new FileUtil(), new FileEndingDirectoryFileFilter(fileBlackList)).convertProject(args[1], args[2], new StringToConvertionTypeMapper().stringToConvertionType(args[0]), fileWhiteList);
     }
 
-    public static Set<String> listFilesUsingFileWalk(String dir) throws IOException {
-        try (Stream<Path> stream = Files.walk(Paths.get(dir))) {
-            return stream
-                    .filter(file -> !Files.isDirectory(file))
-                    .map(Path::toAbsolutePath)
-                    .map(Path::toString)
-                    .filter(in->in.endsWith(".java"))
-                    .collect(Collectors.toSet());
+    private static List<String> getArgumentValuesList(String[] args, String option) {
+        List<String> optionsList = new ArrayList<>();
+        int startIndex = 3;
+
+        for (int i = 3; i < args.length; i++) {
+            startIndex++;
+            if (args[i].startsWith(option)) {
+                break;
+            }
         }
+
+        for (int j = startIndex; j < args.length; j++) {
+            if (args[j].startsWith("--")) {
+                break;
+            }
+            optionsList.add(args[j]);
+            System.out.println("args[i]:" + args[j]);
+            System.out.println("option" + startIndex);
+        }
+        return optionsList;
     }
 }
