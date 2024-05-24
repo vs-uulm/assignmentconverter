@@ -16,7 +16,7 @@ public class FileConverter {
     Pattern endAssignment = Pattern.compile("// END ASSIGNMENT");
 
     Pattern startExclude = Pattern.compile("// BEGIN EXCLUDE");
-    Pattern endExclude = Pattern.compile("// END EXLUDE");
+    Pattern endExclude = Pattern.compile("// END EXCLUDE");
 
     public void convertFileToAssignment(String filePath) throws IOException {
         copyToNewFile(startSolution, endSolution, filePath);
