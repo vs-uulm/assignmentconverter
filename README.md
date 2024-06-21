@@ -22,13 +22,15 @@ java -jar libs/AssignmentConverter-1.0-SNAPSHOT-all.jar assignment . ./build/gen
 The --fileEndingsModifyWhiteLists specifies what types of files should be edited by the assignment converter
 The --fileEndingsBlackList specifies which files should be copied over in the example we want to exclude zip files
 
-In order to automate this one can add the following Code to the build.gradle:
+In order to automate this,
+one can add the following Code to the build.gradle:
 This makes two extra tasks available prepareAssignment and zipAssignment
 One has to then just call '''gradle task zipAssignment''' in the project directory to create a zip of the assignment.
 
 The code to be added to gradle
 Everything that is enclosed in //BEGIN EXCLUDE, //END EXCLUDE is not copied over to the assignment
-'''
+
+```
 // BEGIN EXCLUDE
 task prepareAssignment(type:Exec) {
 
@@ -49,4 +51,4 @@ task zipAssignment(type:Zip){
 }
 
 // END EXCLUDE
-'''
+```
