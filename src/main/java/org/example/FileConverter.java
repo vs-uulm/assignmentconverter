@@ -9,24 +9,32 @@ import java.util.regex.Pattern;
 
 public class FileConverter {
 
-    Pattern startSolution = Pattern.compile("// BEGIN SOLUTION", Pattern.CASE_INSENSITIVE);
-    Pattern endSolution = Pattern.compile("// END SOLUTION", Pattern.CASE_INSENSITIVE);
+    private final String beginSolutionRegex = "// BEGIN SOLUTION";
+    private final String endSolutionRegex = "// END SOLUTION";
 
-    Pattern startAssignment = Pattern.compile("// BEGIN ASSIGNMENT");
-    Pattern endAssignment = Pattern.compile("// END ASSIGNMENT");
+    private final String beginAssignmentRegex = "// BEGIN ASSIGNMENT";
+    private final String endAssignmentRegex = "// END ASSIGNMENT";
 
     Pattern startExclude = Pattern.compile("// BEGIN EXCLUDE");
     Pattern endExclude = Pattern.compile("// END EXCLUDE");
 
     public void convertFileToAssignment(String filePath) throws IOException {
-        copyToNewFile(startSolution, endSolution, filePath);
+
+        Pattern beginSolution = Pattern.compile(this.beginSolutionRegex, Pattern.CASE_INSENSITIVE);
+        Pattern endSolution = Pattern.compile(this.endSolutionRegex, Pattern.CASE_INSENSITIVE);
+        Pattern ignoreSingleLine = Pattern.compile(this.beginAssignmentRegex + "|" + this.endAssignmentRegex, Pattern.CASE_INSENSITIVE);
+        copyToNewFile(beginSolution, endSolution, filePath, ignoreSingleLine);
     }
 
     public void convertFileToSolution(String filePath) throws IOException {
-        copyToNewFile(startAssignment, endAssignment, filePath);
+        Pattern beginAssignment = Pattern.compile(this.beginAssignmentRegex, Pattern.CASE_INSENSITIVE);
+        Pattern endAssignment = Pattern.compile(this.endAssignmentRegex, Pattern.CASE_INSENSITIVE);
+        Pattern ignoreSingleLine = Pattern.compile(this.beginSolutionRegex + "|" + this.endSolutionRegex, Pattern.CASE_INSENSITIVE);
+
+        copyToNewFile(beginAssignment, endAssignment, filePath, ignoreSingleLine);
     }
 
-    private void copyToNewFile(Pattern start, Pattern end, String filePath) throws IOException {
+    private void copyToNewFile(Pattern ignoreStart, Pattern ignoreEnd, String filePath, Pattern ignoreSingleLine) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String currentLine;
 
@@ -35,15 +43,20 @@ public class FileConverter {
         StringBuilder result = new StringBuilder();
 
         while ((currentLine = reader.readLine()) != null) {
-            if (start.matcher(currentLine).find() || startExclude.matcher(currentLine).find()) {
+            if (ignoreStart.matcher(currentLine).find() || startExclude.matcher(currentLine).find()) {
                 ignoreComments = true;
+            }
+
+            // continue if current line is part of the Assignment
+            if (ignoreSingleLine.matcher(currentLine).find()) {
+                continue;
             }
 
             if (!ignoreComments) {
                 result.append(currentLine).append("\n");
             }
 
-            if (end.matcher(currentLine).find() || endExclude.matcher(currentLine).find()) {
+            if (ignoreEnd.matcher(currentLine).find() || endExclude.matcher(currentLine).find()) {
                 ignoreComments = false;
             }
         }
