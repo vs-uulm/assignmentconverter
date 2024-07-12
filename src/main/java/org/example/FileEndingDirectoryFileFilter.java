@@ -11,6 +11,7 @@ public class FileEndingDirectoryFileFilter implements FileFilter {
     public FileEndingDirectoryFileFilter(List<String> excludedFileEndingsToCopy) {
         this.excludedFileEndingsToCopy = excludedFileEndingsToCopy;
     }
+
     /**
      * Tests whether or not the specified abstract pathname should be
      * included in a pathname list.
@@ -21,8 +22,8 @@ public class FileEndingDirectoryFileFilter implements FileFilter {
      */
     @Override
     public boolean accept(File pathname) {
-        for(String excludedFileEnding : excludedFileEndingsToCopy) {
-            if(pathname.getAbsolutePath().endsWith(excludedFileEnding)){
+        for (String excludedFileEnding : excludedFileEndingsToCopy) {
+            if (pathname.toPath().getFileName().toString().matches(excludedFileEnding)) {
                 return false;
             }
         }

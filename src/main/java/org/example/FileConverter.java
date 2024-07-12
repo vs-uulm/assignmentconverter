@@ -15,8 +15,8 @@ public class FileConverter {
     private final String beginAssignmentRegex = "// BEGIN ASSIGNMENT";
     private final String endAssignmentRegex = "// END ASSIGNMENT";
 
-    Pattern startExclude = Pattern.compile("// BEGIN EXCLUDE");
-    Pattern endExclude = Pattern.compile("// END EXCLUDE");
+    private final Pattern startExclude = Pattern.compile("// BEGIN EXCLUDE");
+    private final Pattern endExclude = Pattern.compile("// END EXCLUDE");
 
     public void convertFileToAssignment(String filePath) throws IOException {
 

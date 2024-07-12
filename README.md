@@ -6,6 +6,7 @@ Afterwards all files that are specified are scanned for //BEGIN SOLUTION, //END 
 Everything that is enclosed in the comments is deleted.
 
 # How to use
+
 This project uses Java 21 and uses gradle 8.5.
 To use clone this project and run the gradle task shadowJar.
 This results in a runnable jar in build/libs/.
@@ -14,7 +15,9 @@ Then the tool can be used as follows:
 ```
  java -jar [theJar] [assignment/solution] [pathToProjectToBeConverted] [destinationPath] --fileEndingsModifyWhiteList [INSERT FILE ENDING HERE] --fileEndingsBlacklist [INSERT FILE ENDINGS HERE] 
 ```
+
 Example:
+
 ```
 java -jar libs/AssignmentConverter-1.0-SNAPSHOT-all.jar assignment . ./build/generatedAssignment --fileEndingsModifyWhiteList .java .gradle .zip --fileEndingsBlacklist .zip
 ```
@@ -35,7 +38,7 @@ Everything that is enclosed in //BEGIN EXCLUDE, //END EXCLUDE is not copied over
 task prepareAssignment(type:Exec) {
 
   //on linux
-  commandLine 'java', '-jar', 'libs/AssignmentConverter-1.0-SNAPSHOT-all.jar', 'assignment','.', './build/generatedAssignment', '--fileEndingsModifyWhiteList','.java','.gradle', '.zip','--fileEndingsBlacklist', '.zip'
+  commandLine 'java', '-jar', 'libs/AssignmentConverter-1.0-SNAPSHOT-all.jar', 'assignment','.', './build/generatedAssignment', '--fileEndingsModifyWhiteList','.java','.gradle', '.zip','--fileEndingsBlacklist', '.*.zip'
 
   doLast {
     println "Executed!"

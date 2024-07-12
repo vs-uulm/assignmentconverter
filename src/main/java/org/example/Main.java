@@ -47,8 +47,6 @@ public class Main {
                 break;
             }
             optionsList.add(args[j]);
-            System.out.println("args[i]:" + args[j]);
-            System.out.println("option" + startIndex);
         }
         return optionsList;
     }
